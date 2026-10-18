@@ -6,7 +6,7 @@
    Link nhúng KHÔNG để ở đây: mỗi phim có một file riêng trong thư mục link/ (link/<mã phim>.js).
    Dạng gọn có tham số thứ 6 = số tập, tham số thứ 7 = link ảnh poster (để '' nếu chưa có).
    Thêm/sửa phim xong chạy: node tao-trang.js  (tạo trang phim/<mã>/tap-<số tập>/xem-phim.html cho từng tập và file link/<mã>.js còn thiếu) */
-const M=(t,ty,y,c,g,n,p)=>({title:t,type:ty,year:y,country:c,genres:g.split('/'),poster:p||'',note:'Phim mẫu',
+const M=(t,ty,y,c,g,n,p)=>({title:t,type:ty,year:y,country:c,genres:g.split('/'),poster:p||'',note:'',
   eps:Array.from({length:n||(ty==='Movie'?1:8)},(_,i)=>({name:(n||(ty==='Movie'?1:8))===1?'Full':'Tập '+(i+1)}))});
 const MOVIES=[
  M('Hội Chứng Tuổi Thanh Xuân Phần 1','TV Series',2019,'Nhật Bản','School/Romance/Comedy/Supernatural/Psychological',12,'https://www.infoanime.com.br/poster/2018/seishunbutayarou.jpg')
