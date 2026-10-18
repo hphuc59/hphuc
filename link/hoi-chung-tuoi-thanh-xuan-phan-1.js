@@ -8,6 +8,6 @@
      [{name:'Vietsub',url:'https://...'}, {name:'Thuyết minh',url:'https://...'}],
      {name:'Tập 1 - Mở đầu', servers:['https://...','https://...']}, */
 LINKS['hoi-chung-tuoi-thanh-xuan-phan-1']=[
-  ['https://server-1','https://server-2'],
+  ['https://player.abyssplayer.com/SEDoyHnRwJ','https://server-2'],
   ['https://server-1','https://server-2'],
 ];
