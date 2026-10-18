@@ -1,4 +1,7 @@
-/* ========================================================================= */
+/* =========================================================================
+   Trang chủ (trang-chu/<số trang>.html): tìm kiếm, bộ lọc, phân trang, thẻ phim.
+   Dữ liệu phim lấy từ assets/data.js (poster là tham số cuối của dòng phim).
+   ========================================================================= */
 
 const P=+document.body.dataset.page||1;
 const url=n=>n+'.html';
@@ -87,4 +90,3 @@ $('menu').onclick=()=>mob()?$('side').classList.toggle('open'):app.classList.tog
 $('close').onclick=()=>mob()?$('side').classList.remove('open'):app.classList.add('collapsed');
 document.querySelector('main').addEventListener('click',e=>{if(!e.target.closest('#menu'))$('side').classList.remove('open')});
 load();render();
-    
