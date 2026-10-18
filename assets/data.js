@@ -9,7 +9,7 @@
 const M=(t,ty,y,c,g,n,p)=>({title:t,type:ty,year:y,country:c,genres:g.split('/'),poster:p||'',note:'',
   eps:Array.from({length:n||(ty==='Movie'?1:8)},(_,i)=>({name:(n||(ty==='Movie'?1:8))===1?'Full':'Tập '+(i+1)}))});
 const MOVIES=[
- M('Hội Chứng Tuổi Thanh Xuân Phần 1','TV Series',2019,'Nhật Bản','School/Romance/Comedy/Supernatural/Psychological',12,'https://www.infoanime.com.br/poster/2018/seishunbutayarou.jpg')
+ M('Hội Chứng Tuổi Thanh Xuân Phần 1','TV Series',2019,'Nhật Bản','School/Romance/Comedy/Supernatural/Psychological',12,'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101291-wfEdgPqtfU0l.jpg')
 ];
 const PER=8; /* số phim mỗi trang */
 const slug=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
