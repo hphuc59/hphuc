@@ -1,22 +1,24 @@
-/* ============ THÊM / SỬA PHIM: chỉ cần sửa danh sách bên dưới ============
-   Mỗi phim là một dòng, cách nhau bằng dấu phẩy:
-   {title:'Tên phim', type:'Movie' hoặc 'TV Series', year:2024, country:'Hàn Quốc',
-    genres:['Hành động','Tâm lý'], poster:'link ảnh poster', note:'ghi chú'}
-   Muốn xóa phim: xóa dòng đó đi. Ở dạng gọn: M('Tên','Movie',2024,'Mỹ','Thể loại 1/Thể loại 2')
-   Link nhúng KHÔNG để ở đây: mỗi phim có một file riêng trong thư mục link/ (link/<mã phim>.js).
-   Dạng gọn có tham số thứ 6 = số tập, tham số thứ 7 = link ảnh poster (để '' nếu chưa có).
-   Thêm/sửa phim xong chạy: node tao-trang.js  (tạo trang phim/<mã>/tap-<số tập>/xem-phim.html cho từng tập và file link/<mã>.js còn thiếu) */
-const M=(t,ty,y,c,g,n,p)=>({title:t,type:ty,year:y,country:c,genres:g.split('/'),poster:p||'',note:'',
-  eps:Array.from({length:n||(ty==='Movie'?1:8)},(_,i)=>({name:(n||(ty==='Movie'?1:8))===1?'Full':'Tập '+(i+1)}))});
-const MOVIES=[
- M('Hội Chứng Tuổi Thanh Xuân Phần 1','TV Series',2019,'Nhật Bản','School/Romance/Comedy/Supernatural/Psychological',12,'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101291-wfEdgPqtfU0l.jpg')
-];
-const PER=8; /* số phim mỗi trang */
+/* ============ DỮ LIỆU CHUNG — danh sách phim KHÔNG nằm ở đây ============
+   Phim được lưu trong thư mục kho/: kho/1.js, kho/2.js, ... mỗi file TỐI ĐA 50 phim.
+   Thêm phim: mở file kho cuối cùng, thêm một dòng trong MOVIES.push( ... ):
+     M('Tên','Movie' hoặc 'TV Series',2024,'Mỹ','Thể loại 1/Thể loại 2',số tập,'link poster'),
+   (số tập: bỏ trống thì Movie = 1 tập, TV Series = 8 tập; poster: để '' nếu chưa có)
+   Đủ 50 phim thì tạo file mới kho/2.js (nội dung: MOVIES.push( ... );) rồi làm tiếp.
+   Link nhúng cũng không để ở đây: mỗi phim có file riêng link/<mã phim>.js
+   Xong chạy: node tao-trang.js  (tạo trang chủ, trang từng tập và file link còn thiếu) */
 const slug=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-MOVIES.forEach(m=>{m.id=m.id||slug(m.title);if(!m.eps)m.eps=[{name:'Full'}]});
+const M=(t,ty,y,c,g,n,p)=>{const k=n||(ty==='Movie'?1:8);
+  return{id:slug(t),title:t,type:ty,year:y,country:c,genres:g.split('/'),poster:p||'',note:'',
+  eps:Array.from({length:k},(_,i)=>({name:k===1?'Full':'Tập '+(i+1)}))}};
+const MOVIES=[]; /* được nạp từ kho/1.js, kho/2.js, ... */
+const PER=8; /* số phim mỗi trang */
 /* Đánh dấu tập đã xem: lưu trong trình duyệt (localStorage) */
 const WK='phim.watched';
 const getW=id=>{try{return JSON.parse(localStorage.getItem(WK)||'{}')[id]||[]}catch(e){return[]}};
 const setW=(id,a)=>{try{const o=JSON.parse(localStorage.getItem(WK)||'{}');o[id]=a;localStorage.setItem(WK,JSON.stringify(o))}catch(e){}};
 /* Link nhúng từng phim: được nạp từ link/<mã phim>.js */
 const LINKS={};
+/* Tập đang xem dở của từng phim (bấm lại poster sẽ mở đúng tập này) */
+const LK='phim.last';
+const getL=id=>{try{return+(JSON.parse(localStorage.getItem(LK)||'{}')[id]||0)}catch(e){return 0}};
+const setL=(id,i)=>{try{const o=JSON.parse(localStorage.getItem(LK)||'{}');o[id]=i;localStorage.setItem(LK,JSON.stringify(o))}catch(e){}};
