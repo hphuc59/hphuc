@@ -1,42 +1,24 @@
-.read()
-old="const MOVIES=[]; /* được nạp từ kho/1.js, kho/2.js, ... */\n"
-assert old in d
-new='''const MOVIES=[];
-/* Nạp danh sách phim từ kho/1.js ... kho/KHO.js (tự chèn vào mọi trang, không cần sửa từng trang html) */
-const KHO=1; /* số file trong thư mục kho/ — thêm kho/2.js thì đổi thành 2 (chạy node tao-trang.js sẽ tự cập nhật) */
-MOVIES.push=function(...a){a.forEach(m=>{if(!this.some(x=>x.id===m.id))Array.prototype.push.call(this,m)});return this.length}; /* nạp trùng cũng không bị lặp phim */
-if(typeof document!=='undefined'&&document.currentScript)for(let i=1;i<=KHO;i++)document.write('<script src="'+new URL('../kho/'+i+'.js',document.currentScript.src).href+'"><\\/script>');
-'''
-d=d.replace(old,new)
-d=d.replace("   Xong chạy: node tao-trang.js  (tạo trang chủ, trang từng tập và file link còn thiếu) */","   Xong chạy: node tao-trang.js  (tạo trang chủ, trang từng tập, file link còn thiếu và tự cập nhật số KHO bên dưới) */")
-open('assets/data.js','w',encoding='utf-8').write(d)
-
-t=open('phim/mau.html',encoding='utf-8').read()
-t=t.replace('{{KHO}}\n','')
-open('phim/mau.html','w',encoding='utf-8').write(t)
-
-g=open('tao-trang.js',encoding='utf-8').read()
-# bỏ chèn thẻ kho tĩnh trong trang tập
-g=g.replace("tpl.split('{{KHO}}').join(khoFiles.map(f=>`<script src=\"{{UP}}kho/${f}\"></script>`).join('\\n')).split('{{UP}}')","tpl.split('{{UP}}')")
-assert '{{KHO}}' not in g
-# bỏ chèn thẻ kho tĩnh trang chủ
-g=g.replace("tcTpl=tcTpl.replace(dataTag,dataTag+'\\n'+khoFiles.map(f=>`<script src=\"../kho/${f}\"></script>`).join('\\n'));\n","")
-assert 'kho/${f}' not in g
-# gỡ override push để bắt trùng + kiểm tra file liên tục + đồng bộ KHO
-g=g.replace("const counts=[];for(const f of files){","delete MOVIES.push;const counts=[];for(const f of files){")
-g=g.replace("const code=fs.readFileSync(path.join(__dirname,'assets/data.js'),'utf8');","khoFiles.forEach((f,i)=>{if(parseInt(f)!==i+1){console.error('Các file trong kho/ phải đánh số liên tục 1.js, 2.js, 3.js... (đang thiếu '+(i+1)+'.js)');process.exit(1)}});\nconst dataPath=path.join(__dirname,'assets/data.js'),code=fs.readFileSync(dataPath,'utf8');",1)
-g=g.replace("if(loi)process.exit(1);\n","if(loi)process.exit(1);\nconst code2=code.replace(/const KHO=\\d+;/,'const KHO='+khoFiles.length+';'); /* tự cập nhật số file kho trong data.js */\nif(code2!==code)fs.writeFileSync(dataPath,code2);\n",1)
-open('tao-trang.js','w',encoding='utf-8').write(g)
-EOF
-node --check tao-trang.js && cat assets/data.js assets/app.js > /tmp/h.js && node --check /tmp/h.js && echo SYNTAX_OK
-# mô phỏng trình duyệt: trang CŨ chỉ có data.js (không thẻ kho) + kho tải 2 lần
-node -e "
-const fs=require('fs'),vm=require('vm');
-const w=[];global.document={currentScript:{src:'https://hphuc59.vercel.app/assets/data.js'},write(s){w.push(s)}};
-global.localStorage={getItem(){return null},setItem(){}};
-vm.runInThisContext(fs.readFileSync('assets/data.js','utf8').replace(/^const /gm,'var '));
-console.log(w);
-for(let i=0;i<2;i++)vm.runInThisContext(fs.readFileSync('kho/1.js','utf8'));
-console.log(MOVIES.length,MOVIES[0].id)"
-# chạy lại trình tạo
-node tao-trang.js && grep -c "kho/" trang-chu/1.html phim/hoi-chung-tuoi-thanh-xuan-phan-1/tap-1/xem-phim.html; grep -n "const KHO" assets/data.js | cut -c1-60
+/* ============ DỮ LIỆU CHUNG — danh sách phim KHÔNG nằm ở đây ============
+   Phim được lưu trong thư mục kho/: kho/1.js, kho/2.js, ... mỗi file TỐI ĐA 50 phim.
+   Thêm phim: mở file kho cuối cùng, thêm một dòng trong MOVIES.push( ... ):
+     M('Tên','Movie' hoặc 'TV Series',2024,'Mỹ','Thể loại 1/Thể loại 2',số tập,'link poster'),
+   (số tập: bỏ trống thì Movie = 1 tập, TV Series = 8 tập; poster: để '' nếu chưa có)
+   Đủ 50 phim thì tạo file mới kho/2.js (nội dung: MOVIES.push( ... );) rồi làm tiếp.
+   Link nhúng cũng không để ở đây: mỗi phim có file riêng link/<mã phim>.js
+   Xong chạy: node tao-trang.js  (tạo trang chủ, trang từng tập và file link còn thiếu) */
+const slug=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const M=(t,ty,y,c,g,n,p)=>{const k=n||(ty==='Movie'?1:8);
+  return{id:slug(t),title:t,type:ty,year:y,country:c,genres:g.split('/'),poster:p||'',note:'',
+  eps:Array.from({length:k},(_,i)=>({name:k===1?'Full':'Tập '+(i+1)}))}};
+const MOVIES=[]; /* được nạp từ kho/1.js, kho/2.js, ... */
+const PER=8; /* số phim mỗi trang */
+/* Đánh dấu tập đã xem: lưu trong trình duyệt (localStorage) */
+const WK='phim.watched';
+const getW=id=>{try{return JSON.parse(localStorage.getItem(WK)||'{}')[id]||[]}catch(e){return[]}};
+const setW=(id,a)=>{try{const o=JSON.parse(localStorage.getItem(WK)||'{}');o[id]=a;localStorage.setItem(WK,JSON.stringify(o))}catch(e){}};
+/* Link nhúng từng phim: được nạp từ link/<mã phim>.js */
+const LINKS={};
+/* Tập đang xem dở của từng phim (bấm lại poster sẽ mở đúng tập này) */
+const LK='phim.last';
+const getL=id=>{try{return+(JSON.parse(localStorage.getItem(LK)||'{}')[id]||0)}catch(e){return 0}};
+const setL=(id,i)=>{try{const o=JSON.parse(localStorage.getItem(LK)||'{}');o[id]=i;localStorage.setItem(LK,JSON.stringify(o))}catch(e){}};
