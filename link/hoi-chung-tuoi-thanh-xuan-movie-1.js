@@ -1,3 +1,3 @@
-LINKS['hoi-chung-tuoi-thanh-xuan-movie-1'] = [
+LINKS['hoi-chung-tuoi-thanh-xuan-movie'] = [
   ['https://player.abyssplayer.com/wSEOhIYfK', ''],
 ];
