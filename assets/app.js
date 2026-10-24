@@ -64,7 +64,7 @@ function load(){try{const u=new URLSearchParams(location.hash.slice(1));$('q').v
   document.querySelectorAll('.grp').forEach(g=>{const k=g.querySelector('[data-k]')?.dataset.k;if(k&&(k==='type'?F.type:F[k]?.size))g.classList.remove('shut')});
   if(u.get('s')){$('q').focus();const l=$('q').value.length;$('q').setSelectionRange(l,l)}}catch(e){}}
 function card(m){
-  const d=getW(m.id),k=Math.max(0,m.eps.findIndex((_,i)=>!d.includes(i))),h='../phim/'+m.id+(m.eps.length===1?'':'/tap-'+(k+1))+'/xem-phim.html';
+  const d=getW(m.id),k=Math.min(Math.max(0,getL(m.id)),m.eps.length-1),h='../phim/'+m.id+(m.eps.length===1?'':'/tap-'+(k+1))+'/xem-phim.html';
   return '<div class="card"><a class="poster" href="'+h+'" aria-label="'+esc(m.title)+'"><span class="tag">'+esc(m.type)+'</span>'+
    esc((m.title||'?').trim().charAt(0).toUpperCase())+
    (m.poster?'<img src="'+esc(m.poster)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">':'')+'</a>'+
