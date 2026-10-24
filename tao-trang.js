@@ -33,10 +33,10 @@ for(const m of MOVIES){
   const dir=path.join(__dirname,'phim',m.id);fs.mkdirSync(dir,{recursive:true});
   /* dọn kiểu cũ (phim/<mã>/<số>.html) */
   for(const f of fs.readdirSync(dir))if(/^\d+\.html$/.test(f))fs.unlinkSync(path.join(dir,f));
-  if(m.eps.length===1)fs.rmSync(path.join(dir,'tap-1'),{recursive:true,force:true}); /* dọn tap-1 cũ của phim 1 tập */
+  if(m.eps.length<2)fs.rmSync(path.join(dir,'tap-1'),{recursive:true,force:true}); /* dọn tap-1 cũ của phim 1 tập */
   m.eps.forEach((e,i)=>{
     const t=m.title+(m.eps.length>1?' - '+e.name:'')+' - Phim';
-    const one=m.eps.length===1; /* phim 1 tập: phim/<mã>/xem-phim.html, không có thư mục tap-1 */
+    const one=m.eps.length<2; /* phim 1 tập: phim/<mã>/xem-phim.html, không có thư mục tap-1 */
     const d2=one?dir:path.join(dir,'tap-'+(i+1));fs.mkdirSync(d2,{recursive:true});
     fs.writeFileSync(path.join(d2,'xem-phim.html'),tpl.split('{{KHO}}').join(khoFiles.map(f=>`<script src="{{UP}}kho/${f}"></script>`).join('\n')).split('{{UP}}').join(one?'../../':'../../../').split('{{TITLE}}').join(esc(t)).split('{{ID}}').join(esc(m.id)).split('{{EP}}').join(i+1));pages++;
   });
