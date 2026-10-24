@@ -23,7 +23,7 @@ function embed(u){
 if(!m||!m.eps[cur]){$('nf').hidden=false}
 else{
   const n=m.eps.length,d=new Set(getW(m.id));
-  d.add(cur);setW(m.id,[...d].sort((a,b)=>a-b)); /* mở trang tập nào là tập đó được đánh dấu ✓ */
+  d.add(cur);setW(m.id,[...d].sort((a,b)=>a-b)); setL(m.id,cur); /* mở trang tập nào là tập đó được đánh dấu ✓ */
   $('main').hidden=false;
   $('t').textContent=m.title;
   $('i').textContent=[m.year,m.country,(m.genres||[]).join(', '),n>1?nameOf(cur):'',m.note].filter(Boolean).join(' · ');
