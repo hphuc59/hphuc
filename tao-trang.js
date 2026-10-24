@@ -10,8 +10,16 @@ const khoDir=path.join(__dirname,'kho');fs.mkdirSync(khoDir,{recursive:true});
 const khoFiles=fs.readdirSync(khoDir).filter(f=>/^\d+\.js$/.test(f)).sort((a,b)=>parseInt(a)-parseInt(b));
 if(!khoFiles.length){console.error('Chưa có file nào trong thư mục kho/ (hãy tạo kho/1.js).');process.exit(1)}
 const code=fs.readFileSync(path.join(__dirname,'assets/data.js'),'utf8');
-const R=new Function('localStorage','files',code+'\nconst counts=[];for(const f of files){const b=MOVIES.length;eval(f);counts.push(MOVIES.length-b)}\nreturn{MOVIES,counts,PER}')(
-  {getItem(){return null},setItem(){}},khoFiles.map(f=>fs.readFileSync(path.join(khoDir,f),'utf8')));
+const vm=require('vm'),khoSrc=khoFiles.map(f=>fs.readFileSync(path.join(khoDir,f),'utf8'));
+let loiCuPhap=false; /* báo lỗi cú pháp dễ hiểu: file nào, dòng mấy */
+khoFiles.forEach((f,i)=>{try{new vm.Script(khoSrc[i],{filename:'kho/'+f})}catch(e){
+  const mm=/:(\d+)/.exec(e.stack||''),n=mm?+mm[1]:0,l=(khoSrc[i].split('\n')[n-1]||'').trim();
+  console.error(`\nLỖI trong kho/${f}${n?' (dòng '+n+')':''}: ${e.message}`+(l?`\n   ${l.length>110?l.slice(0,110)+'...':l}`:'')+
+    '\n   Gợi ý: mỗi dòng M(...) phải kết thúc bằng dấu phẩy (,) — thiếu dấu phẩy ở cuối dòng này hoặc dòng trước nó là lỗi hay gặp nhất. Cũng kiểm tra dấu nháy \' và dấu ngoặc ).');loiCuPhap=true}});
+if(loiCuPhap)process.exit(1);
+let R;
+try{R=new Function('localStorage','files',code+'\nconst counts=[];for(const f of files){const b=MOVIES.length;eval(f);counts.push(MOVIES.length-b)}\nreturn{MOVIES,counts,PER}')(
+  {getItem(){return null},setItem(){}},khoSrc)}catch(e){console.error('LỖI khi đọc thư mục kho/: '+e.message);process.exit(1)}
 const MOVIES=R.MOVIES;
 let loi=false;
 khoFiles.forEach((f,i)=>{if(R.counts[i]>GIOI_HAN){console.error(`kho/${f} có ${R.counts[i]} phim, vượt giới hạn ${GIOI_HAN}. Hãy chuyển bớt sang file kho mới.`);loi=true}});
