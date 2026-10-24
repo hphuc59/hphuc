@@ -2,14 +2,15 @@
    Phim được lưu trong thư mục kho/: kho/1.js, kho/2.js, ... mỗi file TỐI ĐA 50 phim.
    Thêm phim: mở file kho cuối cùng, thêm một dòng trong MOVIES.push( ... ):
      M('Tên','Movie' hoặc 'TV Series',2024,'Mỹ','Thể loại 1/Thể loại 2',số tập,'link poster','Tên gốc'),
-   (Tên gốc: tên phim nguyên bản, hiện dưới tên Việt hoá và cũng tìm kiếm được; để '' nếu không có)
+   (Tên gốc: hiện dưới tên Việt hoá và tìm kiếm được. Một tên: 'Tên gốc'. Nhiều tên: ["Tên 1","Tên 2","Tên 3"]
+    — tên có dấu nháy ' (vd Isn't) thì dùng dấu nháy kép "..." bao quanh; để '' nếu không có)
    (số tập: bỏ trống thì Movie = 1 tập, TV Series = 8 tập; poster: để '' nếu chưa có)
    Đủ 50 phim thì tạo file mới kho/2.js (nội dung: MOVIES.push( ... );) rồi làm tiếp.
    Link nhúng cũng không để ở đây: mỗi phim có file riêng link/<mã phim>.js
    Xong chạy: node tao-trang.js  (tạo trang chủ, trang từng tập và file link còn thiếu) */
 const slug=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const M=(t,ty,y,c,g,n,p,o)=>{const k=n||(ty==='Movie'?1:8);
-  return{id:slug(t),title:t,orig:o||'',type:ty,year:y,country:c,genres:g.split('/'),poster:p||'',note:'',
+  return{id:slug(t),title:t,orig:[].concat(o||[]).filter(Boolean),type:ty,year:y,country:c,genres:g.split('/'),poster:p||'',note:'',
   eps:Array.from({length:k},(_,i)=>({name:k===1?'Full':'Tập '+(i+1)}))}};
 const MOVIES=[]; /* được nạp từ kho/1.js, kho/2.js, ... */
 const PER=8; /* số phim mỗi trang */
