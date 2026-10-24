@@ -26,7 +26,7 @@ else{
   d.add(cur);setW(m.id,[...d].sort((a,b)=>a-b)); setL(m.id,cur); /* mở trang tập nào là tập đó được đánh dấu ✓ */
   $('main').hidden=false;
   $('t').textContent=m.title;
-  if(m.orig){$('t').insertAdjacentHTML('afterend','<p class="worig">'+esc(m.orig)+'</p>')} /* tên gốc nằm dưới tên Việt hoá */
+  if(m.orig&&m.orig.length){$('t').insertAdjacentHTML('afterend','<p class="worig">'+m.orig.map(esc).join(' · ')+'</p>')} /* tên gốc nằm dưới tên Việt hoá */
   $('i').textContent=[m.year,m.country,(m.genres||[]).join(', '),n>1?nameOf(cur):'',m.note].filter(Boolean).join(' · ');
   const sv=serversOf(cur);let pick=0;
   try{pick=Math.min(+sessionStorage.getItem('phim.server')||0,Math.max(0,sv.length-1))}catch(x){}
