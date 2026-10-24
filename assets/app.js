@@ -68,7 +68,7 @@ function card(m){
   return '<div class="card"><a class="poster" href="'+h+'" aria-label="'+esc(m.title)+'"><span class="tag">'+esc(m.type)+'</span>'+
    esc((m.title||'?').trim().charAt(0).toUpperCase())+
    (m.poster?'<img src="'+esc(m.poster)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">':'')+'</a>'+
-   '<div class="meta"><h4>'+esc(m.title)+'</h4>'+(m.orig&&m.orig[0]?'<p class="orig">'+esc(m.orig[0])+'</p>':'')+'<p>'+[m.year,m.country].filter(Boolean).map(esc).join(' · ')+'</p>'+
+   '<div class="meta"><h4>'+esc(m.title)+'</h4>'+'<p>'+[m.year,m.country].filter(Boolean).map(esc).join(' · ')+'</p>'+
    '<p>'+esc((m.genres||[]).join(', '))+'</p>'+(m.note?'<p>'+esc(m.note)+'</p>':'')+
    (d.length?'<p class="seen">Đã xem '+d.length+'/'+m.eps.length+'</p>':'')+'</div></div>';
 }
