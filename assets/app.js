@@ -12,7 +12,7 @@ const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').repl
 
 function match(m,skip){
   const q=norm($('q').value.trim());
-  if(q&&!norm([m.title,m.orig,m.note,m.country,m.year,(m.genres||[]).join(' ')].join(' ')).includes(q))return false;
+  if(q&&!norm([m.title,(m.orig||[]).join(' '),m.note,m.country,m.year,(m.genres||[]).join(' ')].join(' ')).includes(q))return false;
   if(skip!=='type'&&F.type&&m.type!==F.type)return false;
   if(skip!=='genre'&&F.genre.size&&!(m.genres||[]).some(g=>F.genre.has(g)))return false;
   if(skip!=='country'&&F.country.size&&!F.country.has(m.country))return false;
@@ -68,7 +68,7 @@ function card(m){
   return '<div class="card"><a class="poster" href="'+h+'" aria-label="'+esc(m.title)+'"><span class="tag">'+esc(m.type)+'</span>'+
    esc((m.title||'?').trim().charAt(0).toUpperCase())+
    (m.poster?'<img src="'+esc(m.poster)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">':'')+'</a>'+
-   '<div class="meta"><h4>'+esc(m.title)+'</h4>'+(m.orig?'<p class="orig">'+esc(m.orig)+'</p>':'')+'<p>'+[m.year,m.country].filter(Boolean).map(esc).join(' · ')+'</p>'+
+   '<div class="meta"><h4>'+esc(m.title)+'</h4>'+(m.orig&&m.orig[0]?'<p class="orig">'+esc(m.orig[0])+'</p>':'')+'<p>'+[m.year,m.country].filter(Boolean).map(esc).join(' · ')+'</p>'+
    '<p>'+esc((m.genres||[]).join(', '))+'</p>'+(m.note?'<p>'+esc(m.note)+'</p>':'')+
    (d.length?'<p class="seen">Đã xem '+d.length+'/'+m.eps.length+'</p>':'')+'</div></div>';
 }
