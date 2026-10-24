@@ -15,7 +15,7 @@ let loiCuPhap=false; /* báo lỗi cú pháp dễ hiểu: file nào, dòng mấy
 khoFiles.forEach((f,i)=>{try{new vm.Script(khoSrc[i],{filename:'kho/'+f})}catch(e){
   const mm=/:(\d+)/.exec(e.stack||''),n=mm?+mm[1]:0,l=(khoSrc[i].split('\n')[n-1]||'').trim();
   console.error(`\nLỖI trong kho/${f}${n?' (dòng '+n+')':''}: ${e.message}`+(l?`\n   ${l.length>110?l.slice(0,110)+'...':l}`:'')+
-    '\n   Gợi ý: mỗi dòng M(...) phải kết thúc bằng dấu phẩy (,) — thiếu dấu phẩy ở cuối dòng này hoặc dòng trước nó là lỗi hay gặp nhất. Cũng kiểm tra dấu nháy \' và dấu ngoặc ).');loiCuPhap=true}});
+    '\n   Gợi ý: mỗi dòng M(...) phải kết thúc bằng dấu phẩy (,) — thiếu dấu phẩy ở cuối dòng này hoặc dòng trước nó là lỗi hay gặp nhất. Tên phim có dấu nháy \' (vd Isn\'t) thì phải bao bằng dấu nháy kép "...". Nhiều tên gốc: ["Tên 1","Tên 2"].');loiCuPhap=true}});
 if(loiCuPhap)process.exit(1);
 let R;
 try{R=new Function('localStorage','files',code+'\nconst counts=[];for(const f of files){const b=MOVIES.length;eval(f);counts.push(MOVIES.length-b)}\nreturn{MOVIES,counts,PER}')(
