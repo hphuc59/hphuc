@@ -1,0 +1,15 @@
+LINKS['hoi-chung-tuoi-thanh-xuan-phan-2'] = [
+  ['https://player.abyssplayer.com/u20bg_Hy3', ''],
+  ['https://player.abyssplayer.com/rg3n4LBk6', ''],
+  ['https://player.abyssplayer.com/_I7DYBMUV', ''],
+  ['https://player.abyssplayer.com/p-1zwZbdP', ''],
+  ['https://player.abyssplayer.com/LK5EjKwqaB', ''],
+  ['https://player.abyssplayer.com/CgcEhj_EV', ''],
+  ['https://player.abyssplayer.com/3cwDo7q1V', ''],
+  ['https://player.abyssplayer.com/RvEvjKN8v', ''],
+  ['https://player.abyssplayer.com/RUlSWSWaw', ''],
+  ['https://player.abyssplayer.com/0_YdaySUY', ''],
+  ['https://player.abyssplayer.com/r4TXKGkgL', ''],
+  ['https://player.abyssplayer.com/k0bHLmgRZ', ''],
+  ['https://player.abyssplayer.com/4N7JBQ4Ke', ''],
+];
