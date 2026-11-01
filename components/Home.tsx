@@ -66,7 +66,7 @@ export default function Home({ scope = "all" }: { scope?: Scope }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState<string[]>(() => KEYS.filter((k) => list(k).length));
   const [side, setSide] = useState(false); /* menu trượt trên điện thoại */
-  const [filterOpen, setFilterOpen] = useState(true); /* bật/tắt cả khối Bộ lọc */
+  const [filterOpen, setFilterOpen] = useState(false); /* bật/tắt cả khối Bộ lọc */
   const [collapsed, setCollapsed] = useState(false); /* ẩn/hiện menu trên máy tính */
 
   const push = (n: State, p = 1) => {
