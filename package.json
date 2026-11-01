@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@animate-ui/react": "latest",
-    "motion": "^12.0.0",
+    "motion": "^14.0.0",
     "next": "^15.0.0",
     "radix-ui": "^1.4.0",
     "react": "^19.0.0",
