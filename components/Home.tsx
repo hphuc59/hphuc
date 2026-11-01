@@ -66,6 +66,7 @@ export default function Home({ scope = "all" }: { scope?: Scope }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState<string[]>(() => KEYS.filter((k) => list(k).length));
   const [side, setSide] = useState(false); /* menu trượt trên điện thoại */
+  const [filterOpen, setFilterOpen] = useState(true); /* bật/tắt cả khối Bộ lọc */
   const [collapsed, setCollapsed] = useState(false); /* ẩn/hiện menu trên máy tính */
 
   const push = (n: State, p = 1) => {
@@ -106,6 +107,7 @@ export default function Home({ scope = "all" }: { scope?: Scope }) {
     push({ ...s, [k]: next });
   };
   const hasFilter = KEYS.some((k) => s[k].length);
+  const nSel = KEYS.reduce((n, k) => n + s[k].length, 0);
   const clear = () => push({ q: s.q, genre: [], country: [], year: [] });
 
   const mk = (
@@ -176,28 +178,56 @@ export default function Home({ scope = "all" }: { scope?: Scope }) {
         </div>
         <nav className="menu" aria-label="Menu chính">
           {NAV.map((n) => (
-            <Link key={n.href} href={n.href} className={n.scope === scope ? "on" : undefined} aria-current={n.scope === scope ? "page" : undefined}>
+            <Link
+              key={n.href}
+              href={n.href}
+              className={n.scope === scope ? "on" : undefined}
+              aria-current={n.scope === scope ? "page" : undefined}
+            >
               {n.label}
             </Link>
           ))}
         </nav>
-        <div className="brand">Bộ lọc</div>
+        <button
+          type="button"
+          className="ftoggle"
+          aria-expanded={filterOpen}
+          onClick={() => setFilterOpen((o) => !o)}
+        >
+          <span>
+            Bộ lọc{!filterOpen && nSel > 0 ? <em>{nSel}</em> : null}
+          </span>
+          <b>▾</b>
+        </button>
         <AnimatePresence initial={false}>
-          {hasFilter && (
-            <motion.button
-              key="clear"
-              type="button"
-              className="clear"
-              onClick={clear}
+          {filterOpen && (
+            <motion.div
+              key="fbody"
+              style={{ overflow: "hidden" }}
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.22 }}
             >
-              Bỏ hết bộ lọc
-            </motion.button>
+              <AnimatePresence initial={false}>
+                {hasFilter && (
+                  <motion.button
+                    key="clear"
+                    type="button"
+                    className="clear"
+                    onClick={clear}
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                  >
+                    Bỏ hết bộ lọc
+                  </motion.button>
+                )}
+              </AnimatePresence>
+              <Filters groups={groups} open={open} onOpenChange={setOpen} onToggle={toggle} />
+            </motion.div>
           )}
         </AnimatePresence>
-        <Filters groups={groups} open={open} onOpenChange={setOpen} onToggle={toggle} />
       </aside>
 
       <main onClick={(e) => !(e.target as HTMLElement).closest("#menu") && setSide(false)}>
