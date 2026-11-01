@@ -65,3 +65,8 @@ export default function MovieCard({ m, index }: { m: Movie; index: number }) {
           <p className="mt-0.5 text-xs font-medium text-primary">
             Đã xem {prog.seen}/{m.eps.length}
           </p>
+        )}
+      </div>
+    </motion.div>
+  );
+}
