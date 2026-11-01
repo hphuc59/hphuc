@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
-import { loaiText, type Movie } from "@/lib/movies";
+import { epHref, loaiText, type Movie } from "@/lib/movies";
 import { getL, getW } from "@/lib/storage";
 
 export default function MovieCard({ m, index }: { m: Movie; index: number }) {
@@ -29,7 +29,7 @@ export default function MovieCard({ m, index }: { m: Movie; index: number }) {
       transition={{ duration: 0.28, delay: Math.min(index, 8) * 0.04 }}
       whileHover={{ y: -4 }}
     >
-      <Link className="poster" href={`/phim/${m.id}/${prog.k + 1}`} aria-label={m.title}>
+      <Link className="poster" href={epHref(m, prog.k)} aria-label={m.title}>
         {(m.title || "?").trim().charAt(0).toUpperCase()}
         {m.poster && !bad && (
           <img
