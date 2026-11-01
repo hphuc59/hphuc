@@ -1,0 +1,45 @@
+import type { EpLink } from "@/lib/links";
+
+/* Link nhúng từng phim, mỗi dòng là một tập (theo thứ tự).
+   - "link" hoặc { name, url }
+   - nhiều server: ["link1", "link2"] hoặc [{ name: "Vietsub", url: "..." }]
+   - { name: "Tập 1 - Mở đầu", servers: ["...", "..."] } */
+export const LINKS: Record<string, EpLink[]> = {
+  "dua-con-cua-thoi-tiet": [["https://player.abyssplayer.com/G6HT5LLfB",""]],
+  "hoi-chung-tuoi-thanh-xuan-co-be-deo-cap-sach": [["https://player.abyssplayer.com/EYMi6BBD_",""]],
+  "hoi-chung-tuoi-thanh-xuan-em-gai-xuat-hanh": [["https://player.abyssplayer.com/--62CCAoZ",""]],
+  "hoi-chung-tuoi-thanh-xuan-movie": [["https://player.abyssplayer.com/wSEOhIYfK",""]],
+  "hoi-chung-tuoi-thanh-xuan-phan-1": [["https://player.abyssplayer.com/SEDoyHnRwJ",""],
+    ["https://player.abyssplayer.com/jikE7hcBz",""],
+    ["https://player.abyssplayer.com/0D0aE-893",""],
+    ["https://player.abyssplayer.com/_LqDThd1l",""],
+    ["https://player.abyssplayer.com/DEQV6Mg883",""],
+    ["https://player.abyssplayer.com/2ED0_YRn1",""],
+    ["https://player.abyssplayer.com/L5J05CKal",""],
+    ["https://player.abyssplayer.com/-LzyOkOxd",""],
+    ["https://player.abyssplayer.com/4a5Hh_wUM",""],
+    ["https://player.abyssplayer.com/8dihLSsBp",""],
+    ["https://player.abyssplayer.com/6_MtV8M8n",""],
+    ["https://player.abyssplayer.com/ldykK7cfM",""],
+    ["https://player.abyssplayer.com/9ejgypWSS",""]],
+  "hoi-chung-tuoi-thanh-xuan-phan-2": [["https://player.abyssplayer.com/u20bg_Hy3",""],
+    ["https://player.abyssplayer.com/rg3n4LBk6",""],
+    ["https://player.abyssplayer.com/_I7DYBMUV",""],
+    ["https://player.abyssplayer.com/p-1zwZbdP",""],
+    ["https://player.abyssplayer.com/LK5EjKwqaB",""],
+    ["https://player.abyssplayer.com/CgcEhj_EV",""],
+    ["https://player.abyssplayer.com/3cwDo7q1V",""],
+    ["https://player.abyssplayer.com/RvEvjKN8v",""],
+    ["https://player.abyssplayer.com/RUlSWSWaw",""],
+    ["https://player.abyssplayer.com/0_YdaySUY",""],
+    ["https://player.abyssplayer.com/r4TXKGkgL",""],
+    ["https://player.abyssplayer.com/k0bHLmgRZ",""],
+    ["https://player.abyssplayer.com/4N7JBQ4Ke",""]],
+  "tap-lam-nguoi-xau-phan-1": [["https://player.abyssplayer.com/mr7n20oNQ",""],
+    ["https://player.abyssplayer.com/37QlTX1Qo",""],
+    ["https://player.abyssplayer.com/evc6UL6ZX",""],
+    ["https://player.abyssplayer.com/3KS9y9jsj",""],
+    ["https://player.abyssplayer.com/Xxi9dfhGD",""],
+    ["https://player.abyssplayer.com/7abblxahc",""],
+    ["https://player.abyssplayer.com/ACKHFdi41",""]],
+};
