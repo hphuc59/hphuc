@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import type { Movie } from "@/lib/movies-core";
-import { loaiText } from "@/lib/movies-core";
+import { epHref, loaiText } from "@/lib/movies-core";
 import { nameOf, serversOf } from "@/lib/links";
 import { LIST_KEY, SERVER_KEY, getW, setL, setW } from "@/lib/storage";
 
@@ -116,7 +116,7 @@ export default function Watch({ movie: m, cur }: { movie: Movie; cur: number }) 
         <>
           {cur < n - 1 && (
             <div className="acts">
-              <Link className="btn pri" href={`/phim/${m.id}/${cur + 2}`}>
+              <Link className="btn pri" href={epHref(m, cur + 1)}>
                 Tập tiếp theo ›
               </Link>
             </div>
@@ -125,7 +125,7 @@ export default function Watch({ movie: m, cur }: { movie: Movie; cur: number }) 
             {m.eps.map((_, i) => (
               <MotionLink
                 key={i}
-                href={`/phim/${m.id}/${i + 1}`}
+                href={epHref(m, i)}
                 className={"ep" + (i === cur ? " cur" : "") + (done.includes(i) ? " done" : "")}
                 aria-current={i === cur ? "page" : undefined}
                 initial={{ opacity: 0, y: 8 }}
