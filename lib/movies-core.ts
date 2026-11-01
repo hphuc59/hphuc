@@ -51,6 +51,15 @@ export const M = (
   };
 };
 
+/* Địa chỉ xem phim: phim 1 tập → /phim/<mã>/xem-phim ; phim nhiều tập → /phim/<mã>/tap-N */
+export const epSeg = (m: Movie, i: number) => (m.eps.length < 2 ? "xem-phim" : `tap-${i + 1}`);
+export const epHref = (m: Movie, i: number) => `/phim/${m.id}/${epSeg(m, i)}`;
+export const epIndex = (m: Movie, seg: string) => {
+  if (m.eps.length < 2) return seg === "xem-phim" ? 0 : -1;
+  const mt = /^tap-(\d+)$/.exec(seg);
+  return mt ? +mt[1] - 1 : -1;
+};
+
 /* Phân loại tự động: Phim lẻ / Phim bộ / Anime lẻ / Anime bộ */
 const isAnimeTag = (s: string) => s.toLowerCase() === "anime";
 export const isAnime = (m: Movie) => m.genres.some(isAnimeTag);
