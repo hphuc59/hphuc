@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
+import { Button, SegmentedControl } from "open-glass-ui";
 import type { Movie } from "@/lib/movies-core";
 import { epHref, loaiText } from "@/lib/movies-core";
 import { nameOf, serversOf } from "@/lib/links";
@@ -99,12 +100,13 @@ export default function Watch({ movie: m, cur }: { movie: Movie; cur: number }) 
       </div>
 
       {svLen > 1 && (
-        <div className="eps servers">
-          {sv.map((x, k) => (
-            <button type="button" key={k} className={"ep" + (k === pick ? " cur" : "")} onClick={() => choose(k)}>
-              {x.name}
-            </button>
-          ))}
+        <div className="servers">
+          <SegmentedControl
+            aria-label="Chọn server"
+            items={sv.map((x, k) => ({ value: String(k), label: x.name }))}
+            value={String(pick)}
+            onValueChange={(v: string) => choose(+v)}
+          />
         </div>
       )}
 
@@ -116,9 +118,9 @@ export default function Watch({ movie: m, cur }: { movie: Movie; cur: number }) 
         <>
           {cur < n - 1 && (
             <div className="acts">
-              <Link className="btn pri" href={epHref(m, cur + 1)}>
+              <Button variant="primary" onClick={() => router.push(epHref(m, cur + 1))}>
                 Tập tiếp theo ›
-              </Link>
+              </Button>
             </div>
           )}
           <div className="eps">
