@@ -51,7 +51,7 @@ export default function MovieCard({ m, index }: { m: Movie; index: number }) {
           {loai(m)}
         </Badge>
         <span className="absolute inset-0 z-10 grid place-items-center bg-black/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100">
-          <span className="grid size-12 place-items-center rounded-full bg-primary text-primary-foreground shadow-xl">
+          <span className="grid size-12 place-items-center rounded-full border-[1.5px] border-white text-white">
             <Play className="size-5 translate-x-0.5 fill-current" />
           </span>
         </span>
@@ -65,8 +65,3 @@ export default function MovieCard({ m, index }: { m: Movie; index: number }) {
           <p className="mt-0.5 text-xs font-medium text-primary">
             Đã xem {prog.seen}/{m.eps.length}
           </p>
-        )}
-      </div>
-    </motion.div>
-  );
-}
