@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
-import { Glass, SegmentedControl } from "open-glass-ui";
 import { MOVIES, PER, isAnime, loai, tl, type Movie } from "@/lib/movies";
 import { LIST_KEY } from "@/lib/storage";
 import Logo from "./Logo";
@@ -160,7 +159,6 @@ export default function Home({ scope = "all" }: { scope?: Scope }) {
   return (
     <div className={"app" + (collapsed ? " collapsed" : "")}>
       <aside id="side" className={side ? "open" : undefined}>
-        <Glass material="frosted" className="side-glass">
         <div className="brandrow">
           <Link className="site" href="/" aria-label="Kho Phim - Trang chủ">
             <Logo />
@@ -176,17 +174,13 @@ export default function Home({ scope = "all" }: { scope?: Scope }) {
             ✕
           </button>
         </div>
-        <div className="menu">
-          <SegmentedControl
-            aria-label="Menu chính"
-            items={NAV.map((n) => ({ value: n.scope, label: n.label }))}
-            value={scope}
-            onValueChange={(v: string) => {
-              const t = NAV.find((n) => n.scope === v);
-              if (t && t.scope !== scope) router.push(t.href);
-            }}
-          />
-        </div>
+        <nav className="menu" aria-label="Menu chính">
+          {NAV.map((n) => (
+            <Link key={n.href} href={n.href} className={n.scope === scope ? "on" : undefined} aria-current={n.scope === scope ? "page" : undefined}>
+              {n.label}
+            </Link>
+          ))}
+        </nav>
         <div className="brand">Bộ lọc</div>
         <AnimatePresence initial={false}>
           {hasFilter && (
@@ -204,7 +198,6 @@ export default function Home({ scope = "all" }: { scope?: Scope }) {
           )}
         </AnimatePresence>
         <Filters groups={groups} open={open} onOpenChange={setOpen} onToggle={toggle} />
-        </Glass>
       </aside>
 
       <main onClick={(e) => !(e.target as HTMLElement).closest("#menu") && setSide(false)}>

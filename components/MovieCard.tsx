@@ -4,7 +4,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
-import { Card } from "open-glass-ui";
 import { epHref, loaiText, type Movie } from "@/lib/movies";
 import { getL, getW } from "@/lib/storage";
 
@@ -30,7 +29,6 @@ export default function MovieCard({ m, index }: { m: Movie; index: number }) {
       transition={{ duration: 0.28, delay: Math.min(index, 8) * 0.04 }}
       whileHover={{ y: -4 }}
     >
-      <Card interactive className="card-glass">
       <Link className="poster" href={epHref(m, prog.k)} aria-label={m.title}>
         {(m.title || "?").trim().charAt(0).toUpperCase()}
         {m.poster && !bad && (
@@ -54,7 +52,6 @@ export default function MovieCard({ m, index }: { m: Movie; index: number }) {
           </p>
         )}
       </div>
-      </Card>
     </motion.div>
   );
 }
