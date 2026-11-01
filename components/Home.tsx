@@ -3,9 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
+import { Search, SlidersHorizontal, X } from "lucide-react";
 import { MOVIES, PER, isAnime, loai, tl, type Movie } from "@/lib/movies";
 import { LIST_KEY } from "@/lib/storage";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Logo from "./Logo";
 import Filters, { type Group, type Key } from "./Filters";
 import MovieCard from "./MovieCard";
@@ -65,9 +71,6 @@ export default function Home({ scope = "all" }: { scope?: Scope }) {
   const [text, setText] = useState(s.q);
   const inputRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState<string[]>(() => KEYS.filter((k) => list(k).length));
-  const [side, setSide] = useState(false); /* menu trượt trên điện thoại */
-  const [filterOpen, setFilterOpen] = useState(false); /* bật/tắt cả khối Bộ lọc */
-  const [collapsed, setCollapsed] = useState(false); /* ẩn/hiện menu trên máy tính */
 
   const push = (n: State, p = 1) => {
     const u = new URLSearchParams();
@@ -106,7 +109,6 @@ export default function Home({ scope = "all" }: { scope?: Scope }) {
     const next = v === "" ? [] : cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v];
     push({ ...s, [k]: next });
   };
-  const hasFilter = KEYS.some((k) => s[k].length);
   const nSel = KEYS.reduce((n, k) => n + s[k].length, 0);
   const clear = () => push({ q: s.q, genre: [], country: [], year: [] });
 
@@ -156,107 +158,104 @@ export default function Home({ scope = "all" }: { scope?: Scope }) {
     return qs ? `${pathname}?${qs}` : pathname;
   };
 
-  const mob = () => window.matchMedia("(max-width:760px)").matches;
+  const chips = KEYS.flatMap((k) => s[k].map((v) => ({ k, v })));
 
   return (
-    <div className={"app" + (collapsed ? " collapsed" : "")}>
-      <aside id="side" className={side ? "open" : undefined}>
-        <div className="brandrow">
-          <Link className="site" href="/" aria-label="Kho Phim - Trang chủ">
-            <Logo />
-            <span>Kho Phim</span>
+    <div className="min-h-screen">
+      <header className="sticky top-0 z-30 border-b border-border/70 bg-background/70 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3">
+          <Link href="/" className="flex items-center gap-2.5" aria-label="Kho Phim - Trang chủ">
+            <Logo className="size-9" />
+            <span className="text-xl font-extrabold tracking-tight">Kho Phim</span>
           </Link>
-          <button
-            id="close"
-            type="button"
-            aria-label="Tắt menu"
-            title="Tắt menu"
-            onClick={() => (mob() ? setSide(false) : setCollapsed(true))}
-          >
-            ✕
-          </button>
-        </div>
-        <nav className="menu" aria-label="Menu chính">
-          {NAV.map((n) => (
-            <Link
-              key={n.href}
-              href={n.href}
-              className={n.scope === scope ? "on" : undefined}
-              aria-current={n.scope === scope ? "page" : undefined}
-            >
-              {n.label}
-            </Link>
-          ))}
-        </nav>
-        <button
-          type="button"
-          className="ftoggle"
-          aria-expanded={filterOpen}
-          onClick={() => setFilterOpen((o) => !o)}
-        >
-          <span>
-            Bộ lọc{!filterOpen && nSel > 0 ? <em>{nSel}</em> : null}
-          </span>
-          <b>▾</b>
-        </button>
-        <AnimatePresence initial={false}>
-          {filterOpen && (
-            <motion.div
-              key="fbody"
-              style={{ overflow: "hidden" }}
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.22 }}
-            >
-              <AnimatePresence initial={false}>
-                {hasFilter && (
-                  <motion.button
-                    key="clear"
-                    type="button"
-                    className="clear"
-                    onClick={clear}
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                  >
-                    Bỏ hết bộ lọc
-                  </motion.button>
-                )}
-              </AnimatePresence>
-              <Filters groups={groups} open={open} onOpenChange={setOpen} onToggle={toggle} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </aside>
 
-      <main onClick={(e) => !(e.target as HTMLElement).closest("#menu") && setSide(false)}>
-        <div className="top">
-          <button id="menu" type="button" onClick={() => (mob() ? setSide((o) => !o) : setCollapsed((c) => !c))}>
-            ☰
-          </button>
-          <input
-            ref={inputRef}
-            type="search"
-            id="q"
-            value={text}
-            placeholder="Tìm phim theo tên, quốc gia, thể loại, ghi chú…"
-            onChange={(e) => {
-              setText(e.target.value);
-              push({ ...s, q: e.target.value });
+          <Tabs
+            value={scope}
+            onValueChange={(v) => {
+              const t = NAV.find((n) => n.scope === v);
+              if (t && t.scope !== scope) router.push(t.href);
             }}
-          />
+            className="order-last w-full sm:order-none sm:w-auto"
+          >
+            <TabsList className="w-full sm:w-auto">
+              {NAV.map((n) => (
+                <TabsTrigger key={n.scope} value={n.scope}>
+                  {n.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+
+          <div className="ml-auto flex min-w-0 flex-1 items-center gap-2 sm:max-w-md">
+            <div className="relative min-w-0 flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                ref={inputRef}
+                type="search"
+                id="q"
+                value={text}
+                className="pl-9"
+                placeholder="Tìm phim, quốc gia, thể loại…"
+                onChange={(e) => {
+                  setText(e.target.value);
+                  push({ ...s, q: e.target.value });
+                }}
+              />
+            </div>
+
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" className="shrink-0">
+                  <SlidersHorizontal />
+                  <span className="hidden sm:inline">Bộ lọc</span>
+                  {nSel > 0 && <Badge className="px-2">{nSel}</Badge>}
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left">
+                <SheetTitle>Bộ lọc</SheetTitle>
+                <SheetDescription className="sr-only">Lọc phim theo thể loại, quốc gia và năm</SheetDescription>
+                {nSel > 0 && (
+                  <Button variant="outline" size="sm" className="self-start text-primary" onClick={clear}>
+                    Bỏ hết bộ lọc
+                  </Button>
+                )}
+                <div className="-mr-2 flex-1 overflow-y-auto pr-2">
+                  <Filters groups={groups} open={open} onOpenChange={setOpen} onToggle={toggle} />
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
-        <p className="info">
-          {matched.length} / {base.length} phim{N > 1 ? ` · Trang ${P}/${N}` : ""}
-        </p>
-        <div className="grid" id="grid">
+      </header>
+
+      <main className="mx-auto max-w-7xl px-4 py-6">
+        <div className="mb-5 flex flex-wrap items-center gap-2">
+          <p className="mr-2 text-sm text-muted-foreground">
+            {matched.length} / {base.length} phim{N > 1 ? ` · Trang ${P}/${N}` : ""}
+          </p>
+          {chips.map(({ k, v }) => (
+            <button
+              key={k + v}
+              type="button"
+              onClick={() => toggle(k, v)}
+              className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary outline-none transition hover:bg-primary/20 focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label={`Bỏ lọc ${v}`}
+            >
+              {v}
+              <X className="size-3" />
+            </button>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 lg:grid-cols-4">
           <AnimatePresence mode="popLayout">
             {page.map((m, i) => (
               <MovieCard key={m.id} m={m} index={i} />
             ))}
           </AnimatePresence>
-          {!page.length && <div className="empty">Không có phim nào khớp bộ lọc.</div>}
+          {!page.length && (
+            <div className="col-span-full py-20 text-center text-muted-foreground">Không có phim nào khớp bộ lọc.</div>
+          )}
         </div>
         <Pager page={P} total={N} href={hrefFor} />
       </main>
