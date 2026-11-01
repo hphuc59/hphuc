@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
-import { MOVIES, PER, loai, tl, type Movie } from "@/lib/movies";
+import { MOVIES, PER, isAnime, loai, tl, type Movie } from "@/lib/movies";
 import { LIST_KEY } from "@/lib/storage";
 import Logo from "./Logo";
 import Filters, { type Group, type Key } from "./Filters";
@@ -14,6 +14,16 @@ import Pager from "./Pager";
 /* Bốn mục ghim là bộ lọc LOẠI; danh sách Thể loại chỉ hiện thể loại của loại đang chọn */
 const GHIM = ["Phim lẻ", "Phim bộ", "Anime lẻ", "Anime bộ"];
 const KEYS: Key[] = ["genre", "country", "year"];
+
+/* Trang chủ = tất cả; /phim = chỉ phim; /anime = chỉ anime */
+export type Scope = "all" | "phim" | "anime";
+const NAV: { href: string; label: string; scope: Scope }[] = [
+  { href: "/", label: "Trang chủ", scope: "all" },
+  { href: "/phim", label: "Phim", scope: "phim" },
+  { href: "/anime", label: "Anime", scope: "anime" },
+];
+const pinOf = (scope: Scope) =>
+  scope === "phim" ? GHIM.slice(0, 2) : scope === "anime" ? GHIM.slice(2) : GHIM;
 
 type State = { q: string; genre: string[]; country: string[]; year: string[] };
 
@@ -40,7 +50,9 @@ function match(m: Movie, s: State, skip: string[] = []) {
   return true;
 }
 
-export default function Home() {
+export default function Home({ scope = "all" }: { scope?: Scope }) {
+  /* chỉ lấy phim thuộc trang đang xem; bộ lọc (thể loại, năm, quốc gia) tính trên tập này */
+  const base = scope === "phim" ? MOVIES.filter((m) => !isAnime(m)) : scope === "anime" ? MOVIES.filter(isAnime) : MOVIES;
   const sp = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -65,7 +77,7 @@ export default function Home() {
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   };
 
-  const matched = MOVIES.filter((m) => match(m, s));
+  const matched = base.filter((m) => match(m, s));
   const N = Math.max(1, Math.ceil(matched.length / PER));
   const page = matched.slice((P - 1) * PER, P * PER);
 
@@ -107,11 +119,11 @@ export default function Home() {
     const add = (x: string) => {
       if (x) c[x] = (c[x] || 0) + 1;
     };
-    MOVIES.filter((m) => match(m, s, [key])).forEach((m) =>
+    base.filter((m) => match(m, s, [key])).forEach((m) =>
       (key === "genre" ? tl(m) : [String(m[key])]).forEach(add),
     );
     /* số phim của bốn loại không bị thu hẹp bởi loại đang chọn */
-    if (key === "genre") MOVIES.filter((m) => match(m, s, ["genre", "ty"])).forEach((m) => add(loai(m)));
+    if (key === "genre") base.filter((m) => match(m, s, ["genre", "ty"])).forEach((m) => add(loai(m)));
     const keys = [
       ...pin,
       ...[...new Set([...Object.keys(c), ...s[key]])].filter((k) => !pin.includes(k)).sort(sort),
@@ -120,7 +132,7 @@ export default function Home() {
       key,
       label,
       allLabel,
-      total: MOVIES.filter((m) => match(m, s, [key])).length,
+      total: base.filter((m) => match(m, s, [key])).length,
       keys,
       counts: c,
       selected: s[key],
@@ -129,7 +141,7 @@ export default function Home() {
   };
   const vi = (a: string, b: string) => a.localeCompare(b, "vi");
   const groups: Group[] = [
-    mk("genre", "Thể loại", "Tất cả thể loại", vi, GHIM),
+    mk("genre", "Thể loại", "Tất cả thể loại", vi, pinOf(scope)),
     mk("country", "Quốc gia", "Tất cả quốc gia", vi),
     mk("year", "Năm phim", "Tất cả năm", (a, b) => +b - +a),
   ];
@@ -148,7 +160,10 @@ export default function Home() {
     <div className={"app" + (collapsed ? " collapsed" : "")}>
       <aside id="side" className={side ? "open" : undefined}>
         <div className="brandrow">
-          <div className="brand">Bộ lọc</div>
+          <Link className="site" href="/" aria-label="Kho Phim - Trang chủ">
+            <Logo />
+            <span>Kho Phim</span>
+          </Link>
           <button
             id="close"
             type="button"
@@ -159,6 +174,14 @@ export default function Home() {
             ✕
           </button>
         </div>
+        <nav className="menu" aria-label="Menu chính">
+          {NAV.map((n) => (
+            <Link key={n.href} href={n.href} className={n.scope === scope ? "on" : undefined} aria-current={n.scope === scope ? "page" : undefined}>
+              {n.label}
+            </Link>
+          ))}
+        </nav>
+        <div className="brand">Bộ lọc</div>
         <AnimatePresence initial={false}>
           {hasFilter && (
             <motion.button
@@ -199,7 +222,7 @@ export default function Home() {
           />
         </div>
         <p className="info">
-          {matched.length} / {MOVIES.length} phim{N > 1 ? ` · Trang ${P}/${N}` : ""}
+          {matched.length} / {base.length} phim{N > 1 ? ` · Trang ${P}/${N}` : ""}
         </p>
         <div className="grid" id="grid">
           <AnimatePresence mode="popLayout">
@@ -213,4 +236,4 @@ export default function Home() {
       </main>
     </div>
   );
-      }
+}
