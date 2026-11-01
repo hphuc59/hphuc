@@ -201,10 +201,6 @@ export default function Home({ scope = "all" }: { scope?: Scope }) {
       </aside>
 
       <main onClick={(e) => !(e.target as HTMLElement).closest("#menu") && setSide(false)}>
-        <Link className="site" href="/" aria-label="Kho Phim - Trang chủ">
-          <Logo />
-          <span>Kho Phim</span>
-        </Link>
         <div className="top">
           <button id="menu" type="button" onClick={() => (mob() ? setSide((o) => !o) : setCollapsed((c) => !c))}>
             ☰
