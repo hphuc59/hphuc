@@ -122,21 +122,3 @@ aside .brand{padding:0 8px 8px;color:var(--mute);font-size:13px;font-weight:600;
 /* trên máy tính, khi thanh bên đang hiện thì logo ở khu nội dung được ẩn để khỏi trùng */
 @media (min-width:761px){.app:not(.collapsed) main>.site{display:none}}
 
-/* ===== OpenGlass UI ===== */
-html{background:#000}
-body{min-height:100vh;background:
-  radial-gradient(55rem 38rem at 8% -8%,#f5c5183a,transparent 60%),
-  radial-gradient(50rem 40rem at 105% 8%,#5b6cff33,transparent 60%),
-  radial-gradient(45rem 32rem at 50% 112%,#ff4d8d2b,transparent 60%),#000;
-  background-attachment:fixed}
-aside{background:transparent;border-right:0;padding:12px}
-.side-glass{min-height:calc(100vh - 24px);padding:16px 12px;border-radius:20px}
-.menu{margin:0 0 18px}
-.menu>*{width:100%}
-.card-glass{padding:8px;border-radius:16px;display:block}
-.card-glass .meta{padding:10px 4px 4px}
-.poster{box-shadow:0 6px 18px #0008}
-.top input,#menu,.pager a,.pager .dis{background:#ffffff12;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-color:#ffffff24}
-.servers{margin:12px 0;overflow-x:auto}
-.player{box-shadow:0 12px 40px #000a;border-color:#ffffff24}
-@media (max-width:760px){aside{padding:8px}.side-glass{min-height:calc(100vh - 16px)}}

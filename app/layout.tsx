@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Be_Vietnam_Pro } from "next/font/google";
-import "open-glass-ui/styles.css";
 import "./globals.css";
-import Providers from "@/components/Providers";
 
 const font = Be_Vietnam_Pro({
   subsets: ["vietnamese", "latin"],
@@ -22,9 +20,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi" className={font.variable}>
-      <body>
-        <Providers>{children}</Providers>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
